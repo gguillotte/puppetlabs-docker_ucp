@@ -9,8 +9,9 @@ Status](https://travis-ci.org/puppetlabs/puppetlabs-docker_ucp.svg?branch=master
 2.  [Setup - The basics of getting started with docker_ucp](#setup)
     -  [Beginning with docker_ucp](#beginning-with-docker-ucp)
 3.  [Usage - Configuration options and additional functionality](#usage)
-4.  [Limitations - OS compatibility, etc.](#limitations)
-5.  [Development - Guide for contributing to the module](#development)
+4.  [Reference - An under-the-hood peek at what the module is doing and how](#reference)
+5.  [Limitations - OS compatibility, etc.](#limitations)
+6.  [Development - Guide for contributing to the module](#development)
 
 ## Description
 
@@ -211,6 +212,111 @@ docker_ucp::dtr { 'Dtr install':
   dtr_ucp_url      => 'https://172.17.10.101',
 }
 ```
+
+## Reference
+
+### Classes
+
+-   `docker_ucp::docker_ucp`: Installs and manages the Docker Universal Control
+    Plane (UCP) application using the official installer.
+
+### Defined types
+
+-   `docker_ucp::dtr`: Installs and manages a Docker Trusted Registry (DTR).
+
+### `docker_ucp::docker_ucp`
+
+#### Parameters
+
+...
+
+### `docker_ucp::docker_dtr`
+
+#### Parameters
+
+##### `install`
+
+Data type: Boolean.
+
+If true, attempt to install and configure a new DTR. Cannot be used in the same
+declaration as the [`join`](#join) parameter.
+
+Default: false.
+
+##### `join`
+
+Data type: Boolean.
+
+If true, attempt to add a replica to a DTR cluster. Cannot be used in the same
+declaration as the [`install`](#install) parameter.
+
+Default: false.
+
+##### `dtr_version`
+
+Data type: String.
+
+*Required*. The version of DTR to install.
+
+Valid options: A string containing a valid DTR version number, such as '2.2.4', or
+'latest'.
+
+##### `dtr_external_url`
+
+Data type: String.
+
+*Required* if `dtr => true`. The external URL used to access this Docker Trusted Registry.
+
+##### `ucp_node`
+
+Data type: String.
+
+*Required* if `dtr => true`. The UCP node on which the Docker trusted Registry will run.
+
+##### `ucp_username`
+
+Data type: String.
+
+*Required* if `dtr => true`. The administrative user name for the UCP cluster.
+
+##### `ucp_password`
+
+Data type: String.
+
+*Required* if `dtr => true`. The administrative password for the UCP cluster.
+
+##### `ucp_insecure_tls`
+
+Data type: Boolean.
+
+Determines whether to check if the SSL certificate the UCP cluster is vaild. To use a
+self-signed SSL certificate, set this to true.
+
+Default: false.
+
+##### `dtr_ucp_url`
+
+Data type: String.
+
+The URL that the DTR uses to communicate with the UCP cluster.
+
+Default: undef.
+
+##### `replica_id`
+
+Data type: String.
+
+The replica ID for the DTR cluster.
+
+Default: undef.
+
+##### `ucp_ca`
+
+Data type: String.
+
+The certificate authority to pass as part of the `install`/`join` flags.
+
+Default: undef.
 
 ## Limitations
 
