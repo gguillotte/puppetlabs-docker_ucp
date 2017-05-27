@@ -61,8 +61,9 @@ for examples.
 
 ## Usage
 
-The class takes a number of parameters, depending on your specific
-setup. Consult the UCP documentation for details of this options.
+The parameters available to the docker_ucp class depend on your configuration. Consult the
+[UCP CLI reference](https://docs.docker.com/datacenter/ucp/2.2/reference/cli/install/) for
+details about these options.
 
 ```puppet
 class { 'docker_ucp':
@@ -82,8 +83,7 @@ class { 'docker_ucp':
 }
 ```
 
-Note that `license_file` option will only work with versions of UCP
-later than 0.8.0.
+> **NOTE:** The `license_file` parameter requires UCP version 0.8.0 or newer.
 
 ### Joining a node to a UCP-managed swarm
 
@@ -96,12 +96,11 @@ class { 'docker_ucp':
 }
 ```
 
-The module uses the default username and password. To set these, provide those in
-parameters.
+The module uses the default username (`admin`) and password (`orca`). To set these,
+provide those in parameters.
 
-The class also takes a number of
-other parameters useful for joininng. Again these should map to the
-options in the official UCP documetation.
+The class also takes other parameters useful for joining a node to a swarm. These should
+also correspond with the options described in the official UCP documetation.
 
 ```puppet
 class { 'docker_ucp':
@@ -120,10 +119,10 @@ class { 'docker_ucp':
 
 #### Version 2 and newer
 
-In UCP version 2 Docker has changed the underlying cluster scheduler from Swarm legacy to
-Swarm mode, because of that change the join flags have also changed.
+In UCP version 2, Docker changed the underlying cluster scheduler from Swarm legacy to
+Swarm mode, which also changed the join flags.
 
-To join to a v2 manager (formally a controller in v1) please use the following:
+To join a node to a v2 manager (known as a controller in UCP v1):
 
 ```puppet
 class { 'docker_ucp':
@@ -137,8 +136,12 @@ class { 'docker_ucp':
 
 ### Installing a Docker Trusted Registry
 
-To install a [Docker trusted registry](https://docs.docker.com/datacenter/dtr/2.2/guides/)
-(DTR) on to your UCP cluster, please see the following example.
+[Docker trusted registry](https://docs.docker.com/datacenter/dtr/2.2/guides/)
+(DTR) is a containerized Docker image storage application that runs on a Docker UCP
+cluster.
+
+To install a DTR in a UCP cluster using the docker_ucp module, use the module's `dtr`
+defined type.
 
 ```puppet
 docker_ucp::dtr { 'Dtr install':
@@ -154,17 +157,23 @@ docker_ucp::dtr { 'Dtr install':
 }
 ```
 
-In this example we are setting the `install => true` this tells Puppet we want to
-configure a new registry. We set the `dtr_version`, this can be any version of the
-registry that is compatible with your UCP cluster. The `dtr_external_url` is the URL you
-will use to hit the registry, `ucp_node` is the node in the cluster that the registry will
-run on, user name and password are self explanatory. `ucp_insecure_tls => true` allows the
-use of self signed SSL certs, this should be set to false in a production environment.
-`dtr_ucp_url` is the URL that the registry will use to contact the UCP cluster.
+In this example, we:
+
+-   Set `install => true`, which configures a new registry.
+-   Set `dtr_version`, which can be any version of the registry compatible with the UCP
+    cluster.
+-   Set `dtr_external_url` to the URL where the registry can be accessed.
+-   Set `ucp_node` to the name of the node in the cluster where the registry will run.
+-   Set the `ucp_username` and `ucp_password`.
+-   Set `ucp_insecure_tls => true` to allow self-signed SSL certificates. In production,
+    set this to false and use properly signed certificates.
+-   Set `dtr_ucp_url` to the URL that the registry uses to contact the UCP cluster.
 
 #### Joining a replica to a Docker Trusted Registry cluster
 
-To join a replica to your DTR cluster please see the following example.
+To
+[join a replica](https://docs.docker.com/datacenter/dtr/2.2/guides/admin/install/#step-5-configure-dtr#step-7-join-replicas-to-the-cluster)
+to a DTR cluster, use `join => true` instead of `install => true`.
 
 ```puppet
 docker_ucp::dtr { 'Dtr install':
@@ -179,14 +188,16 @@ docker_ucp::dtr { 'Dtr install':
 }
 ```
 
-In this example we set mostly the same flags as installing the initial install. The main
-difference is that we have used the `join` flag not the `install` flag. Please note you
-cannot use `install` and `join` in the same block of Puppet code.
+Also, note that the replica doesn't use `dtr_external_url`.
+
+> **NOTE:** You can't use the `install` and `join` parameters in the same declaration of
+> a dtr defined type.
 
 #### Removing a Docker Trusted Registry
 
-To remove the DTR from your UCP cluster you need to pass some flags, the flags are the
-same as the install flags, except we are setting `ensure => 'absent'`.
+To remove the DTR from your UCP cluster, provide the same parameters as in
+[installation](#installing-a-docker-trusted-registry), but use `ensure => 'absent'`
+instead of `install => true`.
 
 ```puppet
 docker_ucp::dtr { 'Dtr install':
@@ -215,11 +226,11 @@ this is limited to:
 Puppet modules on the Puppet Forge are open projects, and community contributions are
 essential for keeping them great. Please follow our guidelines when contributing changes.
 
-To see who's already involved, see the
-[list of contributors](https://github.com/puppetlabs/puppetlabs-docker_platform/graphs/contributors).
-
 For more information, see our
 [module contribution guide](https://docs.puppet.com/forge/contributing.html).
+
+To see who's already involved, see the
+[list of contributors](https://github.com/puppetlabs/puppetlabs-docker_platform/graphs/contributors).
 
 ### Maintainers
 
